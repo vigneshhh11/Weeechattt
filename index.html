@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeeeChattt</title>
+    <style>
+        body {
+            background-color: black;
+            color: green;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #chat {
+            border: 1px solid green;
+            padding: 10px;
+            height: 300px;
+            width: 90%;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #message {
+            width: 80%;
+            padding: 10px;
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: green;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: grey;
+        }
+        #loginArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #error {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>WeeeChattt</h1>
+    <div id="loginArea">
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button id="login">Login</button>
+        <div id="error">Invalid password. Please try again.</div>
+    </div>
+    
+    <div id="chatArea" style="display:none;">
+        <div id="chat"></div>
+        <input type="text" id="message" placeholder="Type a message..." disabled />
+        <button id="send" disabled>Send</button>
+    </div>
+    
+    <script>
+        let loggedIn = false;
+        const chatDiv = document.getElementById('chat');
+        const errorDiv = document.getElementById('error');
+
+        document.getElementById('login').onclick = () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Check for valid password
+            if (password === "1234") {
+                loggedIn = true;
+                errorDiv.style.display = 'none';
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('chatArea').style.display = 'block';
+                document.getElementById('message').disabled = false;
+                document.getElementById('send').disabled = false;
+
+                chatDiv.innerHTML += `<p>${username} has joined the chat.</p>`;
+            } else {
+                errorDiv.style.display = 'block'; // Show error message
+            }
+        };
+
+        document.getElementById('send').onclick = () => {
+            if (loggedIn) {
+                const message = document.getElementById('message').value;
+                const username = document.getElementById('username').value;
+                if (message) {
+                    chatDiv.innerHTML += `<p><strong>${username}:</strong> ${message}</p>`;
+                    document.getElementById('message').value = '';
+                    chatDiv.scrollTop = chatDiv.scrollHeight; // Auto-scroll to the latest message
+                }
+            }
+        };
+    </script>
+</body>
+</html>
