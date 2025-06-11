@@ -13,123 +13,144 @@
         .header {
             text-align: center;
             font-size: 2.5em;
-            padding: 20px 0 10px 0;
+            padding: 24px 0 5px 0;
             color: #fff;
-            letter-spacing: 2px;
             font-weight: bold;
+            letter-spacing: 2px;
+            user-select: none;
         }
-        .login-box, .chat-box {
-            max-width: 400px;
-            margin: 50px auto 0 auto;
-            padding: 30px;
+        .login-container, .chat-container {
+            max-width: 410px;
+            margin: 48px auto 0 auto;
+            padding: 26px 30px 30px 30px;
             background: #111;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #333;
+            border-radius: 12px;
+            box-shadow: 0 0 12px #222;
         }
-        .login-box input {
-            width: 95%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 1.2em;
+        .login-container input {
+            width: 96%;
+            padding: 16px;
+            margin: 14px 0;
+            font-size: 1.1em;
             border: none;
-            border-radius: 5px;
-            outline: none;
+            border-radius: 6px;
             background: #222;
             color: #fff;
+            outline: none;
         }
-        .login-box button {
+        .login-container button {
             width: 100%;
-            padding: 15px;
-            font-size: 1.2em;
+            padding: 17px;
+            font-size: 1.15em;
             background: #00c853;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
             font-weight: bold;
+            margin-top: 12px;
+        }
+        .status-msg {
+            color: #00c853;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.08em;
+        }
+        .err-msg {
+            color: #ff5252;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.08em;
         }
         .chat-area {
-            height: 300px;
+            height: 340px;
             overflow-y: auto;
             background: #181818;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 7px;
+            margin-bottom: 21px;
         }
         .chat-message {
-            margin: 8px 0;
             color: #00ff00;
-            font-size: 1.1em;
+            font-size: 1.09em;
+            margin: 10px 0 4px 0;
             word-break: break-word;
         }
-        .chat-input-area {
+        .chat-msg-user {
+            font-weight: bold;
+            color: #a7ffeb;
+            margin-right: 6px;
+        }
+        .chat-input-row {
             display: flex;
         }
         .chat-input {
             flex: 1;
             padding: 15px;
-            font-size: 1.1em;
+            font-size: 1.08em;
             border: none;
-            border-radius: 5px 0 0 5px;
+            border-radius: 6px 0 0 6px;
             outline: none;
             background: #222;
             color: #fff;
         }
-        .chat-send-btn {
-            padding: 0 35px;
-            font-size: 1.2em;
+        .send-btn {
+            padding: 0 40px;
+            font-size: 1.19em;
             border: none;
             background: #00c853;
             color: #fff;
-            border-radius: 0 5px 5px 0;
+            border-radius: 0 6px 6px 0;
             cursor: pointer;
             font-weight: bold;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
     <div class="header">privatttcyy</div>
 
-    <div id="login" class="login-box">
-        <h2 style="text-align:center;">Login</h2>
+    <div id="login" class="login-container">
+        <div id="login-status" class="status-msg"></div>
+        <div id="login-error" class="err-msg"></div>
+        <h2 style="text-align:center;margin-top:0;">Login</h2>
         <input type="text" id="username" placeholder="Enter your name" autocomplete="off"><br>
         <input type="password" id="password" placeholder="Password" autocomplete="off"><br>
         <button onclick="login()">Login</button>
-        <div id="login-error" style="color: #f55; text-align:center; margin-top:10px;"></div>
     </div>
 
-    <div id="chat" class="chat-box" style="display:none;">
+    <div id="chat" class="chat-container" style="display:none;">
+        <div class="status-msg" id="welcome-msg"></div>
         <div class="chat-area" id="chat-area"></div>
-        <div class="chat-input-area">
+        <div class="chat-input-row">
             <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." autocomplete="off">
-            <button class="chat-send-btn" onclick="sendMessage()">SEND</button>
+            <button class="send-btn" onclick="sendMessage()">SEND</button>
         </div>
     </div>
 
     <script>
-        // Helper to get/set messages in localStorage
         function getMessages() {
             return JSON.parse(localStorage.getItem('privatttcyy-messages') || '[]');
         }
-        function saveMessages(msgs) {
-            localStorage.setItem('privatttcyy-messages', JSON.stringify(msgs));
+        function saveMessages(messages) {
+            localStorage.setItem('privatttcyy-messages', JSON.stringify(messages));
         }
         function renderMessages() {
-            const msgs = getMessages();
-            const area = document.getElementById('chat-area');
-            area.innerHTML = '';
-            msgs.forEach(m => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'chat-message';
-                msgDiv.textContent = m.user + ': ' + m.text;
-                area.appendChild(msgDiv);
+            const messages = getMessages();
+            const chatArea = document.getElementById('chat-area');
+            chatArea.innerHTML = '';
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'chat-message';
+                div.innerHTML = '<span class="chat-msg-user">' + msg.user + ':</span>' + msg.text;
+                chatArea.appendChild(div);
             });
-            area.scrollTop = area.scrollHeight;
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
         function login() {
             const uname = document.getElementById('username').value.trim();
             const pwd = document.getElementById('password').value;
+            document.getElementById('login-error').textContent = '';
             if (!uname) {
                 document.getElementById('login-error').textContent = 'Please enter your name.';
                 return;
@@ -139,30 +160,37 @@
                 return;
             }
             localStorage.setItem('privatttcyy-username', uname);
+            showChat();
+            // Announce login to chat room
+            const messages = getMessages();
+            messages.push({user: 'System', text: uname + ' has logged in to the chat.'});
+            saveMessages(messages);
+            renderMessages();
+            document.getElementById('welcome-msg').textContent = 'You have been logged in to the chat as ' + uname + '.';
+        }
+        function showChat() {
             document.getElementById('login').style.display = 'none';
             document.getElementById('chat').style.display = '';
             renderMessages();
+            setTimeout(() => { document.getElementById('welcome-msg').textContent = ''; }, 3000);
         }
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
             const uname = localStorage.getItem('privatttcyy-username') || 'Anonymous';
-            const msgs = getMessages();
-            msgs.push({user: uname, text: text});
-            saveMessages(msgs);
+            const messages = getMessages();
+            messages.push({user: uname, text: text});
+            saveMessages(messages);
             input.value = '';
             renderMessages();
         }
-        // Auto-login if already logged in
         window.onload = function() {
             if (localStorage.getItem('privatttcyy-username')) {
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('chat').style.display = '';
-                renderMessages();
+                showChat();
             }
         }
-        // Enter key to send message
+        // Enter key to send (chat) or login (password)
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('chat-input').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') sendMessage();
@@ -171,7 +199,7 @@
                 if (e.key === 'Enter') login();
             });
         });
-        // "Realtime" update from localStorage for all tabs
+        // Update chat from other tabs or every second
         setInterval(renderMessages, 1000);
         window.addEventListener('storage', function(e) {
             if (e.key === 'privatttcyy-messages') renderMessages();
