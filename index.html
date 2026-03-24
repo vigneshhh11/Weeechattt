@@ -1,40 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>privatttcyy</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        body {
-            background-color: #000;
-            color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .header {
-            background-color: #111;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-        }
-        
-        .header h1 {
-            color: #fff;
-            font-size: 2.5rem;
-        }
-        
-        .login-container {
-            display: flex;
-            justify-content: center;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>privatttcyy</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial;
+}
+
+body {
+    background: #000;
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background: #111;
+    padding: 20px;
+    text-align: center;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.chat-container {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+}
+
+.login-form {
+    background: #222;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #333;
+    border: none;
+    color: #fff;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    width: 100%;
+    background: #4CAF50;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.message-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.message {
+    background: #222;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>privatttcyy</h1>
+</div>
+
+<div class="login-container" id="loginContainer">
+    <div class="login-form">
+        <h2>Login</h2>
+        <input id="username" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+</div>
+
+<div class="chat-container" id="chatContainer">
+    <div class="message-container" id="messages"></div>
+    <input id="msg" placeholder="Type message">
+    <button onclick="send()">Send</button>
+</div>
+
+<!-- Socket -->
+<script src="https://weeechattt.onrender.com/socket.io/socket.io.js"></script>
+
+<script>
+const socket = io("https://weeechattt.onrender.com");
+
+function login() {
+    const pass = document.getElementById("password").value;
+    const user = document.getElementById("username").value;
+
+    if(pass === "1234" && user !== "") {
+        sessionStorage.setItem("user", user);
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("chatContainer").style.display = "flex";
+    }
+}
+
+function send() {
+    const msg = document.getElementById("msg").value;
+    const user = sessionStorage.getItem("user");
+
+    if(msg !== "") {
+        socket.emit("send_message", {
+            user: user,
+            message: msg
+        });
+        document.getElementById("msg").value = "";
+    }
+}
+
+socket.on("receive_message", (data) => {
+    const div = document.createElement("div");
+    div.className = "message";
+    div.innerText = data.user + ": " + data.message;
+    document.getElementById("messages").appendChild(div);
+});
+</script>
+
+</body>
+</html>            justify-content: center;
             align-items: center;
             flex-direction: column;
             height: 100%;
